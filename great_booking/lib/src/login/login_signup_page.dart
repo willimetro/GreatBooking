@@ -6,7 +6,7 @@ class LoginSignUpPage extends StatefulWidget {
 }
 
 class _LoginSignUpPageState extends State<LoginSignUpPage> {
-
+  final _formKey = new GlobalKey<FormState>();
   bool _isLoading = false;
 
   @override
@@ -17,6 +17,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       ),
       body: Stack(
         children: <Widget>[
+          _showBody(),
           _showCircularProgress()
         ],
       )
@@ -28,5 +29,53 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       return Center(child: CircularProgressIndicator());
     } 
     return Container(height: 0.0, width: 0.0,);
+  }
+
+  Widget _showEmailInput(){
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
+      child: TextFormField(
+        maxLines: 1,
+        keyboardType: TextInputType.emailAddress,
+        autofocus: false,
+        decoration: InputDecoration(
+          hintText: 'Email',
+          icon: Icon(
+            Icons.mail,
+            color: Colors.grey,
+          )
+        ),
+      ),
+    );
+  }
+
+  Widget _showBody(){
+    return Container(
+      padding: EdgeInsets.all(16.0),
+      child: Form(
+        key: _formKey,
+        child: ListView(
+          shrinkWrap: true,
+          children: <Widget>[
+            _showLogo(),
+            _showEmailInput()
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _showLogo(){
+    return Hero(
+      tag: 'hero',
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(0.0, 70.0, 0.0, 0.0),
+        child: CircleAvatar(
+          backgroundColor: Colors.transparent,
+          radius: 48.0,
+          child: Image.asset('assets/flutter-icon.png'),
+        ),
+      ),
+    );
   }
 }
