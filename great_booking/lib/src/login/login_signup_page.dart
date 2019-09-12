@@ -7,7 +7,10 @@ class LoginSignUpPage extends StatefulWidget {
 
 class _LoginSignUpPageState extends State<LoginSignUpPage> {
   final _formKey = new GlobalKey<FormState>();
+
   bool _isLoading = false;
+  String _email;
+  String _password;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +48,28 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             color: Colors.grey,
           )
         ),
+        validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
+        onSaved: (value) => _email = value.trim(),
+      )
+    );
+  }
+
+  Widget _showPasswordInput(){
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
+      child: TextFormField(
+        maxLines: 1,
+        obscureText: true,
+        autofocus: false,
+        decoration: InputDecoration(
+          hintText: 'Password',
+          icon: Icon(
+            Icons.lock,
+            color: Colors.grey,
+          )
+        ),
+        validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
+        onSaved: (value) => _password = value.trim(),
       ),
     );
   }
@@ -58,7 +83,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           shrinkWrap: true,
           children: <Widget>[
             _showLogo(),
-            _showEmailInput()
+            _showEmailInput(),
+            _showPasswordInput()
           ],
         ),
       ),
