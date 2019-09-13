@@ -5,12 +5,16 @@ class LoginSignUpPage extends StatefulWidget {
   _LoginSignUpPageState createState() => _LoginSignUpPageState();
 }
 
+enum FormMode { LOGIN, SIGNUP }
+
 class _LoginSignUpPageState extends State<LoginSignUpPage> {
   final _formKey = new GlobalKey<FormState>();
 
   bool _isLoading = false;
   String _email;
   String _password;
+
+  FormMode _formMode = FormMode.LOGIN;
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +78,25 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     );
   }
 
+  Widget _showPrimaryButton(){
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
+      child: MaterialButton(
+        elevation: 5.0,
+        minWidth: 200.0,
+        height: 42.0,
+        color: Colors.blue,
+        child: _formMode == FormMode.LOGIN ? Text('Login',
+          style: TextStyle(fontSize: 20.0, color: Colors.white )) : 
+            Text('Create account',
+              style: TextStyle(fontSize: 20.0,color: Colors.white)),
+        onPressed: (){}//_validateAndSubmit,
+      ),
+    );
+  }
+
+
+
   Widget _showBody(){
     return Container(
       padding: EdgeInsets.all(16.0),
@@ -84,7 +107,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           children: <Widget>[
             _showLogo(),
             _showEmailInput(),
-            _showPasswordInput()
+            _showPasswordInput(),
+            _showPrimaryButton()
           ],
         ),
       ),

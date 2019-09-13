@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:great_booking/src/login/login_signup_page.dart';
+import 'package:great_booking/src/pages/login_signup_page.dart';
 
 void main() => runApp(MyApp());
 
