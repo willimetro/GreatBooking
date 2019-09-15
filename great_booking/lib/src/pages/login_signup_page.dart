@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:great_booking/src/services/authentication.dart';
 
 class LoginSignUpPage extends StatefulWidget {
+  LoginSignUpPage({this.auth, this.onSignedIn});
+
+  final BaseAuth auth;
+  final VoidCallback onSignedIn;
+
   @override
   _LoginSignUpPageState createState() => _LoginSignUpPageState();
 }
@@ -37,10 +43,21 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       String userId = "";
       try {
         if(_formMode == FormMode.LOGIN) {
-          userId = "";//await widget.
+          userId = await widget.auth.signIn(_email, _password);
+          print('Signed In user: $userId');
         } else {
-          userId = "";
+          userId = await widget.auth.signUp(_email, _password);
+          widget.auth.sendEmailVerification();
           _showVerifyEmailSentDialog();
+          print('Signed Up user: $userId');
+        }
+        
+        setState(() {
+         _isLoading = false; 
+        });
+
+        if(userId != null && userId.length > 0 && _formMode == FormMode.LOGIN) {
+          widget.onSignedIn();
         }
       } catch (e) {
         print('Error: $e');
