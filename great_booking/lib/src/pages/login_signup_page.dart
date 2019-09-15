@@ -10,14 +10,78 @@ enum FormMode { LOGIN, SIGNUP }
 class _LoginSignUpPageState extends State<LoginSignUpPage> {
   final _formKey = new GlobalKey<FormState>();
 
-  bool _isLoading = false;
   String _email;
   String _password;
+  String _errorMessage;
 
   FormMode _formMode = FormMode.LOGIN;
+  bool _isIos;
+  bool _isLoading;
+
+  bool _validateAndSave(){
+    final form = _formKey.currentState;
+    if(form.validate()){
+      form.save();
+      return true;
+    }
+    return false;
+  }
+
+  void _validateAndSubmit() async {
+    setState(() {
+     _errorMessage = "";
+     _isLoading = true; 
+    });
+
+    if(_validateAndSave()) {
+      String userId = "";
+      try {
+        if(_formMode == FormMode.LOGIN) {
+          userId = "";//await widget.
+        } else {
+          userId = "";
+          _showVerifyEmailSentDialog();
+        }
+      } catch (e) {
+        print('Error: $e');
+        setState(() {
+         _isLoading = false;
+         if(_isIos) {
+           _errorMessage = e.details;
+         } else {
+           _errorMessage = e.message;
+         } 
+        });
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    _errorMessage = "";
+    _isLoading = false;
+    super.initState();
+  }
+
+  void _changeFormToSignUp() {
+    _formKey.currentState.reset();
+    _errorMessage = "";
+    setState(() {
+     _formMode = FormMode.SIGNUP; 
+    });
+  }
+
+  void _changeFormToLogin() {
+    _formKey.currentState.reset();
+    _errorMessage = "";
+    setState(() {
+     _formMode = FormMode.LOGIN; 
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    _isIos = Theme.of(context).platform == TargetPlatform.iOS;
     return Scaffold(
       appBar: AppBar(
         title: Text('Great Booking Login'),
@@ -36,6 +100,27 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       return Center(child: CircularProgressIndicator());
     } 
     return Container(height: 0.0, width: 0.0,);
+  }
+
+  void _showVerifyEmailSentDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Verify your account'),
+          content: Text('Link to verify account has been sent your email'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Dismiss'),
+              onPressed: (){
+                _changeFormToLogin();
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      }
+    );
   }
 
   Widget _showEmailInput(){
@@ -90,12 +175,23 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           style: TextStyle(fontSize: 20.0, color: Colors.white )) : 
             Text('Create account',
               style: TextStyle(fontSize: 20.0,color: Colors.white)),
-        onPressed: (){}//_validateAndSubmit,
+        onPressed: _validateAndSubmit,
       ),
     );
   }
 
-
+  Widget _showSecondaryButton() {
+    return FlatButton(
+      child: _formMode == FormMode.LOGIN ? 
+        Text('Create account',
+        style: TextStyle(fontSize: 18.0,fontWeight: FontWeight.w300)) : 
+        Text('Have an account? Sign in',
+        style: TextStyle(fontSize: 18.0,fontWeight: FontWeight.w300)),
+      onPressed: _formMode == FormMode.LOGIN ? 
+      _changeFormToSignUp :
+      _changeFormToLogin,
+    );
+  }
 
   Widget _showBody(){
     return Container(
@@ -108,7 +204,9 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             _showLogo(),
             _showEmailInput(),
             _showPasswordInput(),
-            _showPrimaryButton()
+            _showPrimaryButton(),
+            _showSecondaryButton(),
+            _showErrorMessage()
           ],
         ),
       ),
@@ -127,5 +225,23 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         ),
       ),
     );
+  }
+
+  Widget _showErrorMessage() {
+    if(_errorMessage.length > 0 && _errorMessage != null) {
+      return Text(
+        _errorMessage,
+        style: TextStyle(
+          fontSize: 13.0,
+          color: Colors.red,
+          height: 1.0,
+          fontWeight: FontWeight.w300
+        ),
+      );
+    } else {
+      return Container(
+        height: 0.0,
+      );
+    }
   }
 }
